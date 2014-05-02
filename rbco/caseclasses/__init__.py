@@ -1,41 +1,44 @@
 #coding=utf8
 
 
-def case_class(name, **fields):
+def case_class(__name__, __doc__=None, **__fields__):
 
-    class C(object):
+    def __init__(self, **kwargs):
+        for (field_name, default_value) in self.__fields__.iteritems():
+            setattr(self, field_name, default_value)
 
-        def __init__(self, **kwargs):
-            for (field_name, default_value) in self.__fields__.iteritems():
-                setattr(self, field_name, default_value)
+        for (field_name, value) in kwargs.iteritems():
+            setattr(self, field_name, value)
 
-            for (field_name, value) in kwargs.iteritems():
-                if field_name not in self.__fields__:
-                    raise AttributeError('Unknown field: {}'.format(field_name))
-                setattr(self, field_name, value)
+    def __repr__(self):
+        fields_repr = ', '.join(
+            '{k}={v}'.format(k=k, v=repr(getattr(self, k)))
+            for k
+            in self.__fields__
+        )
+        return '{name}({fields_repr})'.format(
+            name=type(self).__name__,
+            fields_repr=fields_repr
+        )
 
-        def __repr__(self):
-            # TODO: Read __repr__ formal spec
-            fields_repr = ', '.join(
-                '{k}={v}'.format(k=k, v=repr(getattr(self, k)))
-                for k
-                in self.__fields__
-            )
-            return '{name}({fields_repr})'.format(
-                name=type(self).__name__,
-                fields_repr=fields_repr
-            )
-
-    C.__name__ = name
-    C.__fields__ = dict(fields)
-
-    return C
+    return type(
+        __name__,
+        (object,),
+        {
+            '__doc__': __doc__,
+            '__slots__': list(__fields__.keys()),
+            '__fields__': dict(__fields__),
+            '__init__': __init__,
+            '__repr__': __repr__,
+        }
+    )
 
 
 if __name__ == '__main__':
 
     MyClass = case_class(
         'MyClass',
+        'Docstring.',
         a=1,
         b=None
     )
