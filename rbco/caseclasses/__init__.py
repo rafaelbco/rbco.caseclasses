@@ -1,4 +1,6 @@
 #coding=utf8
+from itertools import izip
+from collections import OrderedDict
 
 
 class NoDefaultValue(object):
@@ -7,18 +9,40 @@ class NoDefaultValue(object):
 NO_DEFAULT_VALUE = NoDefaultValue()
 
 
-def case_class(__name__, __doc__=None, **__fields__):
+def case_class(name, fields, default_values=None, doc=None):
 
-    def __init__(self, **kwargs):
+    default_values = default_values or {}
+
+    for field_name in default_values:
+        if field_name not in fields:
+            raise RuntimeError(
+                'Field "{}" is in `default_values` but not in `fields`.'.format(field_name)
+            )
+
+    def __init__(self, *args, **kwargs):
+        num_args = len(args) + len(kwargs)
+        num_fields = len(self.__fields__)
+        if num_args > num_fields:
+            raise RuntimeError(
+                '{} field values were provided but only {} exists.'.format(num_args, num_fields)
+            )
+
+        for field_name in kwargs:
+            if field_name not in self.__fields__:
+                raise AttributeError('Field {} does not exist.'.format(field_name))
+
         for (field_name, default_value) in self.__fields__.iteritems():
-            value = kwargs.get(field_name, default_value)
-            if value is NO_DEFAULT_VALUE:
-                raise AttributeError('Field {} is required.'.format(field_name))
+            setattr(self, field_name, default_value)
 
+        for (field_name, value) in izip(fields, args):
             setattr(self, field_name, value)
 
         for (field_name, value) in kwargs.iteritems():
             setattr(self, field_name, value)
+
+        for field_name in self.__fields__:
+            if getattr(self, field_name) == NO_DEFAULT_VALUE:
+                raise AttributeError('Field "{}" is required.'.format(field_name))
 
     def copy(self, **kwargs):
         d = dict(
@@ -48,13 +72,16 @@ def case_class(__name__, __doc__=None, **__fields__):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+    __fields__ = OrderedDict.fromkeys(fields, NO_DEFAULT_VALUE)
+    __fields__.update(default_values)
+
     return type(
-        __name__,
+        name,
         (object,),
         {
-            '__doc__': __doc__,
+            '__doc__': doc,
             '__slots__': __fields__.iterkeys(),
-            '__fields__': dict(__fields__),
+            '__fields__': __fields__,
             '__init__': __init__,
             '__repr__': __repr__,
             '__eq__': __eq__,
@@ -66,32 +93,18 @@ def case_class(__name__, __doc__=None, **__fields__):
 
 if __name__ == '__main__':
 
-    MyClass = case_class(
-        'MyClass',
-        'Docstring.',
-        a=1,
-        b=None
+    Point = case_class(
+        name='Point',
+        fields=('x', 'y'),
+        default_values={'y': 0},
+        doc='Represent a point.',
     )
 
-    o1 = MyClass()
-    o2 = MyClass(b=2)
+    p1 = Point(1, 2)
+    p2 = Point(y=2, x=1)
+    print p1, p2
+    print p1 == p2
+    print p1 != p2
 
-    print o1
-    print o2
-    print o1 == o2
-    print o1 != o2
+    from pudb import set_trace; set_trace()
 
-    o1.b = 2
-    print o1 == o2
-    print o1 != o2
-
-    class Point(case_class('Point', x=0, y=0)):
-        def sum(self):
-            return self.x + self.y
-
-    p = Point(x=1, y=2)
-    print p.sum()
-
-    p2 = Point.copy(p, y=100)
-
-    print p2
