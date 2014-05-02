@@ -26,7 +26,7 @@ def case_class(__name__, __doc__=None, **__fields__):
         (object,),
         {
             '__doc__': __doc__,
-            '__slots__': list(__fields__.keys()),
+            '__slots__': __fields__.iterkeys(),
             '__fields__': dict(__fields__),
             '__init__': __init__,
             '__repr__': __repr__,
