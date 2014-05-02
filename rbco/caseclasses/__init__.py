@@ -20,6 +20,14 @@ def case_class(__name__, __doc__=None, **__fields__):
         for (field_name, value) in kwargs.iteritems():
             setattr(self, field_name, value)
 
+    def copy(self, **kwargs):
+        d = dict(
+            (field_name, getattr(self, field_name))
+            for field_name in self.__fields__
+        )
+        d.update(kwargs)
+        return self.__class__(**d)
+
     def __repr__(self):
         fields_repr = ', '.join(
             '{k}={v}'.format(k=k, v=repr(getattr(self, k)))
@@ -51,6 +59,7 @@ def case_class(__name__, __doc__=None, **__fields__):
             '__repr__': __repr__,
             '__eq__': __eq__,
             '__ne__': __ne__,
+            'copy': copy,
         }
     )
 
@@ -72,8 +81,17 @@ if __name__ == '__main__':
     print o1 == o2
     print o1 != o2
 
-    from pudb import set_trace; set_trace()
-
     o1.b = 2
     print o1 == o2
     print o1 != o2
+
+    class Point(case_class('Point', x=0, y=0)):
+        def sum(self):
+            return self.x + self.y
+
+    p = Point(x=1, y=2)
+    print p.sum()
+
+    p2 = Point.copy(p, y=100)
+
+    print p2
