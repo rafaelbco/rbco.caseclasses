@@ -1,11 +1,21 @@
 #coding=utf8
 
 
+class NoDefaultValue(object):
+    pass
+
+NO_DEFAULT_VALUE = NoDefaultValue()
+
+
 def case_class(__name__, __doc__=None, **__fields__):
 
     def __init__(self, **kwargs):
         for (field_name, default_value) in self.__fields__.iteritems():
-            setattr(self, field_name, default_value)
+            value = kwargs.get(field_name, default_value)
+            if value is NO_DEFAULT_VALUE:
+                raise AttributeError('Field {} is required.'.format(field_name))
+
+            setattr(self, field_name, value)
 
         for (field_name, value) in kwargs.iteritems():
             setattr(self, field_name, value)
