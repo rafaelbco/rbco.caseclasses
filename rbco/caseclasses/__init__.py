@@ -4,10 +4,24 @@ from funcsigs import signature
 
 
 class CaseClassMixin(object):
+    """
+    Mixin to add "case class" behavior to a class.
+
+    The subclass must implement a `__fields__` attribute, containing a sequence of field names.
+    """
 
     __slots__ = tuple()
 
     def copy(self, **kwargs):
+        """Copy constructor. Create a shallow copy of the instance.
+
+        Example::
+
+            a = Point(1, 2)
+            b = b.copy(x=3)
+            print a  # Point(x=1, y=2)
+            print b  # Point(x=3, y=2)
+        """
         d = dict(
             (field_name, getattr(self, field_name))
             for field_name in self.__fields__
@@ -40,6 +54,11 @@ class CaseClassMixin(object):
 
 
 def case(original_class):
+    """Decorate a class to add "case class" behavior.
+
+    An empty (no-op) constructor must be provided in the decorated class. The parameter
+    specification of the constructor will provide the field names and its default values.
+    """
     init_signature = signature(original_class.__init__)
     init_parameters = init_signature.parameters.values()
 
