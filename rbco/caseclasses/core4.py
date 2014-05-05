@@ -1,27 +1,11 @@
 #coding=utf8
 from .base import build_case_class
-from funcsigs import Parameter
-from funcsigs import Signature
+from .base import init_signature_from_args
 from functools import partial
 
 
 def case(*args, **kwargs):
-
-    init_signature = Signature(
-        [
-            Parameter(name='self', kind=Parameter.POSITIONAL_OR_KEYWORD),
-        ] +
-        [
-            Parameter(name=a, kind=Parameter.POSITIONAL_OR_KEYWORD)
-            for a in args
-        ] +
-        [
-            Parameter(name=k, kind=Parameter.POSITIONAL_OR_KEYWORD, default=v)
-            for (k, v) in kwargs.iteritems()
-        ]
-    )
-
-    return partial(build_case_class, init_signature=init_signature)
+    return partial(build_case_class, init_signature=init_signature_from_args(*args, **kwargs))
 
 if __name__ == '__main__':
 

@@ -2,6 +2,7 @@
 from collections import OrderedDict
 from funcsigs import Parameter
 from funcsigs import signature
+from funcsigs import Signature
 
 
 class CaseClassMixin(object):
@@ -89,4 +90,20 @@ def build_case_class(original_class, init_signature=None):
         original_class.__name__,
         tuple(bases),
         __dict__
+    )
+
+
+def init_signature_from_args(*args, **kwargs):
+    return Signature(
+        [
+            Parameter(name='self', kind=Parameter.POSITIONAL_OR_KEYWORD),
+        ] +
+        [
+            Parameter(name=a, kind=Parameter.POSITIONAL_OR_KEYWORD)
+            for a in args
+        ] +
+        [
+            Parameter(name=k, kind=Parameter.POSITIONAL_OR_KEYWORD, default=v)
+            for (k, v) in kwargs.iteritems()
+        ]
     )
