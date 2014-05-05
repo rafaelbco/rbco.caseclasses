@@ -3,6 +3,8 @@
 
 class CaseClassMixin(object):
 
+    __slots__ = tuple()
+
     def copy(self, **kwargs):
         d = dict(
             (field_name, getattr(self, field_name))
@@ -23,10 +25,13 @@ class CaseClassMixin(object):
         )
 
     def __eq__(self, other):
-        return all(
-            (getattr(self, field_name) == getattr(other, field_name))
-            for field_name in self.__fields__
-        )
+        try:
+            return all(
+                (getattr(self, field_name) == getattr(other, field_name))
+                for field_name in self.__fields__
+            )
+        except AttributeError:
+            return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
