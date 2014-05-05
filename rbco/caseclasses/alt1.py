@@ -1,24 +1,26 @@
 #coding=utf8
 from .base import build_case_class
-from .base import init_signature_from_args
-from functools import partial
 
 
-def case(*args, **kwargs):
-    return partial(build_case_class, init_signature=init_signature_from_args(*args, **kwargs))
+def case(original_class):
+    return build_case_class(original_class=original_class)
+
 
 if __name__ == '__main__':
 
-    @case('x', y=0)
+    @case
     class Point(object):
         """Represent a point."""
+        def __init__(self, x, y=0):
+            pass
 
         def sum(self):
             return self.x + self.y
 
-    @case('x', y=0, z=0)
+    @case
     class ExtendedPoint(Point):
-        pass
+        def __init__(self, x, y=0, z=0):
+            pass
 
     p1 = Point(1, 2)
     p2 = Point(y=2, x=1)
