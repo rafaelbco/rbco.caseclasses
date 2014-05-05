@@ -54,7 +54,7 @@ class CaseClassMixin(object):
 
 
 def case(original_class):
-    """Decorate a class to add "case class" behavior.
+    """Decorator to create a "case class".
 
     An empty (no-op) constructor must be provided in the decorated class. The parameter
     specification of the constructor will provide the field names and its default values.
