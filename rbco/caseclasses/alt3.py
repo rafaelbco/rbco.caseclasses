@@ -21,6 +21,9 @@ def case_class(name, fields, default_values=None, doc=None):
         (f, default_values.get(f, Parameter.empty))
         for f in fields
     ))
+
+    from pudb import set_trace; set_trace()
+
     return build_case_class(original_class=original_class, init_signature=init_signature)
 
 

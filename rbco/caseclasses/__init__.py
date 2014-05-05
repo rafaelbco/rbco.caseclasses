@@ -1,30 +1,80 @@
 #coding=utf8
-from .base import build_case_class
-from .base import init_signature_from_args
-from functools import partial
+from funcsigs import Parameter
+from funcsigs import signature
 
 
-def case(*args, **kwargs):
-    return partial(build_case_class, init_signature=init_signature_from_args(*args, **kwargs))
+class CaseClassMixin(object):
 
-if __name__ == '__main__':
+    __slots__ = tuple()
 
-    @case('x', y=0)
-    class Point(object):
-        """Represent a point."""
+    def copy(self, **kwargs):
+        d = dict(
+            (field_name, getattr(self, field_name))
+            for field_name in self.__fields__
+        )
+        d.update(kwargs)
+        return self.__class__(**d)
 
-        def sum(self):
-            return self.x + self.y
+    def __repr__(self):
+        fields_repr = ', '.join(
+            '{k}={v}'.format(k=k, v=repr(getattr(self, k)))
+            for k
+            in self.__fields__
+        )
+        return '{name}({fields_repr})'.format(
+            name=type(self).__name__,
+            fields_repr=fields_repr
+        )
 
-    @case('x', y=0, z=0)
-    class ExtendedPoint(Point):
-        pass
+    def __eq__(self, other):
+        try:
+            return all(
+                (getattr(self, field_name) == getattr(other, field_name))
+                for field_name in self.__fields__
+            )
+        except AttributeError:
+            return False
 
-    p1 = Point(1, 2)
-    p2 = Point(y=2, x=1)
-    print p1, p2
-    print p1 == p2
-    print p1 != p2
-    print p1.sum()
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
-    p3 = ExtendedPoint(10, 20, 30)
+
+def case(original_class):
+    init_signature = signature(original_class.__init__)
+    init_parameters = init_signature.parameters.values()
+
+    def __init__(self, *args, **kwargs):
+        for p in init_parameters:
+            if p.default is not Parameter.empty:
+                setattr(self, p.name, p.default)
+
+        bound_args = init_signature.bind(self, *args, **kwargs)
+        for (field_name, value) in bound_args.arguments.iteritems():
+            if field_name == 'self':
+                continue
+            setattr(self, field_name, value)
+
+    __fields__ = [p.name for p in init_parameters if p.name != 'self']
+    __dict__ = {
+        '__fields__': __fields__,
+        '__slots__': __fields__,
+        '__doc__': original_class.__doc__,
+        '__init__': __init__,
+    }
+    __dict__.update(
+        (k, v)
+        for (k, v) in original_class.__dict__.iteritems()
+        if not (k.startswith('__') and k.endswith('__'))
+    )
+
+    if issubclass(original_class, CaseClassMixin):
+        bases = original_class.__bases__
+    else:
+        bases = [b for b in original_class.__bases__ if b is not object]
+        bases.append(CaseClassMixin)
+
+    return type(
+        original_class.__name__,
+        tuple(bases),
+        __dict__
+    )
