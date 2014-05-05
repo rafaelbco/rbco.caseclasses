@@ -58,6 +58,24 @@ def case(original_class):
 
     An empty (no-op) constructor must be provided in the decorated class. The parameter
     specification of the constructor will provide the field names and its default values.
+
+    Example::
+
+        @case
+        class Point(object):
+            def __init__(self, x, y):
+                pass
+
+        print Point(1, 2)  # Point(x=1, y=2)
+
+    Example using default values::
+
+        @case
+        class Person(object):
+            def __init__(self, name, age, department=None):
+                pass
+
+        print Person('John', 30)  # Person(name='John', age=30, department=None)
     """
     init_signature = signature(original_class.__init__)
     init_parameters = init_signature.parameters.values()
