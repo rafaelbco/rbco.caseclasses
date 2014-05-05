@@ -1,46 +1,24 @@
 #coding=utf8
-from .base import CaseClassMixin
-from .base import NO_DEFAULT_VALUE
-from collections import OrderedDict
-from funcsigs import signature, Parameter
+from funcsigs import signature
+from .base import build_case_class
 
 
 def case_class(name, init_func, doc=None):
-
-    init_signature = signature(init_func)
-    init_parameters = init_signature.parameters.values()
-
-    def __init__(self, *args, **kwargs):
-        for p in init_parameters:
-            if p.default is not Parameter.empty:
-                setattr(self, p.name, p.default)
-
-        bound_args = init_signature.bind(*args, **kwargs)
-        for (field_name, value) in bound_args.arguments.iteritems():
-            setattr(self, field_name, value)
-
-    __fields__ = OrderedDict(
-        (p.name, p.default if (p.default is not Parameter.empty) else NO_DEFAULT_VALUE)
-        for p in init_parameters
-    )
-
-    return type(
+    original_class = type(
         name,
-        (CaseClassMixin,),
+        (object,),
         {
             '__doc__': doc,
-            '__slots__': __fields__.keys(),
-            '__fields__': __fields__,
-            '__init__': __init__,
         }
     )
+    return build_case_class(original_class=original_class, init_signature=signature(init_func))
 
 
 if __name__ == '__main__':
 
     Point = case_class(
         name='Point',
-        init_func=lambda x, y=0: None,
+        init_func=lambda self, x, y=0: None,
         doc='Represent a point.'
     )
 

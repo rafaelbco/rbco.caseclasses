@@ -1,58 +1,39 @@
 #coding=utf8
-from itertools import izip
-from collections import OrderedDict
-from .base import CaseClassMixin
-from .base import NO_DEFAULT_VALUE
+from .base import build_case_class
+from funcsigs import Signature
+from funcsigs import Parameter
 
 
 def case_class(name, fields, default_values=None, doc=None):
-
-    default_values = default_values or {}
-
     for field_name in default_values:
         if field_name not in fields:
             raise RuntimeError(
                 'Field "{}" is in `default_values` but not in `fields`.'.format(field_name)
             )
 
-    def __init__(self, *args, **kwargs):
-        num_args = len(args) + len(kwargs)
-        num_fields = len(self.__fields__)
-        if num_args > num_fields:
-            raise RuntimeError(
-                '{} field values were provided but only {} exists.'.format(num_args, num_fields)
-            )
-
-        for field_name in kwargs:
-            if field_name not in self.__fields__:
-                raise AttributeError('Field {} does not exist.'.format(field_name))
-
-        for (field_name, default_value) in self.__fields__.iteritems():
-            setattr(self, field_name, default_value)
-
-        for (field_name, value) in izip(fields, args):
-            setattr(self, field_name, value)
-
-        for (field_name, value) in kwargs.iteritems():
-            setattr(self, field_name, value)
-
-        for field_name in self.__fields__:
-            if getattr(self, field_name) == NO_DEFAULT_VALUE:
-                raise AttributeError('Field "{}" is required.'.format(field_name))
-
-    __fields__ = OrderedDict.fromkeys(fields, NO_DEFAULT_VALUE)
-    __fields__.update(default_values)
-
-    return type(
+    original_class = type(
         name,
-        (CaseClassMixin,),
+        (object,),
         {
             '__doc__': doc,
-            '__slots__': __fields__.keys(),
-            '__fields__': __fields__,
-            '__init__': __init__,
         }
     )
+
+    init_signature = Signature(
+        [
+            Parameter(name='self', kind=Parameter.POSITIONAL_OR_KEYWORD),
+        ] +
+        [
+            Parameter(
+                name=f,
+                kind=Parameter.POSITIONAL_OR_KEYWORD,
+                default=default_values.get(f, Parameter.empty)
+            )
+            for f in fields
+        ]
+    )
+
+    return build_case_class(original_class=original_class, init_signature=init_signature)
 
 
 if __name__ == '__main__':
