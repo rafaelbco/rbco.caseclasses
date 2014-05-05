@@ -72,10 +72,14 @@ def case(original_class):
 
         @case
         class Person(object):
-            def __init__(self, name, age, department=None):
+            def __init__(self, name, age=None, department='sales'):
                 pass
 
-        print Person('John', 30)  # Person(name='John', age=30, department=None)
+        print Person('John', 30)
+        # Person(name='John', age=30, department='sales')
+
+        print Person('John', department='marketing')
+        # Person(name='John', age=None, department='marketing')
     """
     init_signature = signature(original_class.__init__)
     init_parameters = init_signature.parameters.values()
