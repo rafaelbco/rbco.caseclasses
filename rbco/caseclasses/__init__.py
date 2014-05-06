@@ -81,8 +81,23 @@ def case(original_class):
         print Person('John', department='marketing')
         # Person(name='John', age=None, department='marketing')
     """
-    init_signature = signature(original_class.__init__)
+    # If `original_class` defines its own `__init__` (i.e dont't inherit it) then we use its
+    # signature.
+    # If `__init__` is inherited then we use `original_class.__init_signature__` which will be
+    # the "real" signature of the base class constructor.
+    init = original_class.__dict__.get('__init__')
+    if init:
+        init_signature = signature(init)
+    else:
+        init_signature = getattr(original_class, '__init_signature__', None)
+        if not init_signature:
+            raise RuntimeError('Case class must define a constructor.')
+
     init_parameters = init_signature.parameters.values()
+
+    for p in init_parameters[1:]:
+        if p.kind is not Parameter.POSITIONAL_OR_KEYWORD:
+            raise RuntimeError('Case class constructor cannot take *args or **kwargs.')
 
     def __init__(self, *args, **kwargs):
         for p in init_parameters:
@@ -95,12 +110,13 @@ def case(original_class):
                 continue
             setattr(self, field_name, value)
 
-    __fields__ = [p.name for p in init_parameters if p.name != 'self']
+    fields = [p.name for p in init_parameters if p.name != 'self']
     __dict__ = {
-        '__fields__': __fields__,
-        '__slots__': __fields__,
+        '__fields__': fields,
+        '__slots__': fields,
         '__doc__': original_class.__doc__,
         '__init__': __init__,
+        '__init_signature__': init_signature,
     }
     __dict__.update(
         (k, v)

@@ -175,8 +175,14 @@ Of course the subclass can override a method on the base class::
     ...
     >>> ie = ImprovedEmployee(name='Mary', department='marketing')
     >>> ie.present()
+    I'm Mary, None years old and my gender is 'None'.
+    I work in the marketing department.
 
 
+Limitations
+===========
+
+Case class constructor cannot take *args or **kwargs.
 
 
 .. _motivation:
