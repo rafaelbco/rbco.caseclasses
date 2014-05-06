@@ -4,8 +4,7 @@ from funcsigs import signature
 
 
 class CaseClassMixin(object):
-    """
-    Mixin to add "case class" behavior to a class.
+    """Mixin to add "case class" behavior to a class.
 
     The subclass must implement a `__fields__` attribute, containing a sequence of field names.
     """
@@ -57,7 +56,8 @@ def case(original_class):
     """Decorator to create a "case class".
 
     An empty (no-op) constructor must be provided in the decorated class. The parameter
-    specification of the constructor will provide the field names and its default values.
+    specification of the constructor will provide the field names and its default values. The
+    returned class will be a subclass of `CaseClassMixin`.
 
     Example::
 
