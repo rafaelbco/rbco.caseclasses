@@ -148,7 +148,7 @@ Let's create a base case class and a derived one::
 It's necessary to repeat the fields of the base class, but you would have to do that anyway if
 you were implementing the case classes manually.
 
-Methods from the base class are inherited and works as expected::
+Methods from the base class are inherited::
 
     >>> p = Person('John', 30, 'm')
     >>> p.present()
@@ -173,9 +173,9 @@ Of course the subclass can override a method on the base class::
     ...         super(ImprovedEmployee, self).present()
     ...         print 'I work in the {} department.'.format(self.department)
     ...
-    >>> ie = ImprovedEmployee(name='Mary', department='marketing')
+    >>> ie = ImprovedEmployee(name='Mary', department='marketing', age=33, gender='f')
     >>> ie.present()
-    I'm Mary, None years old and my gender is 'None'.
+    I'm Mary, 33 years old and my gender is 'f'.
     I work in the marketing department.
 
 
