@@ -307,10 +307,9 @@ It's even possible to call the original version on the subclass method::
     >>> Foo('bar')
     This is my string representation: Foo(bar='bar')
 
-.. IMPORTANT::
-   It's not possible to override the ``__init__`` method, because it's replaced when the ``@case``
-   decorator is applied. If a custom constructor is needed using the CaseClassMixin_ can be
-   a solution.
+It's not possible to override the ``__init__`` method, because it's replaced when the ``@case``
+decorator is applied. If a custom constructor is needed using the CaseClassMixin_ can be
+a solution.
 
 
 .. _CaseClassMixin:
