@@ -5,7 +5,7 @@ Overview
 
 The goal of this project is to provide a compact syntax to define simple "struct-like" (or "record-
 like", "bean-like") classes. The resulting classes are very similar to namedtuple_, but mutable,
-with a nicer syntax and more features.
+with a nicer syntax, more flexibility and more features.
 
 Here's a summary of the features:
 
@@ -246,13 +246,22 @@ It's even possible to call the original version on the subclass method::
     >>> Foo('bar')
     This is my string representation: Foo(bar='bar')
 
-
+.. IMPORTANT::
+   It's not possible to override the ``__init__`` method, because it's replaced when the ``@case``
+   decorator is applied.
 
 
 Limitations
 ===========
 
-.. Case class constructor cannot take *args or **kwargs.
+- The constructor of a case class cannot be customized because it's replaced when the ``@case``
+  decorator is applied.
+
+- It's not possible to assign to unknow fields because of the ``__slots__`` declaration. Example::
+
+    >>> p1 = Person('John')
+    >>> p1.foo = 'bar'
+
 
 
 .. _motivation:
