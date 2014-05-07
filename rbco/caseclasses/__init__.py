@@ -2,6 +2,8 @@
 from funcsigs import Parameter
 from funcsigs import signature
 
+_IGNORED_ATTRS = frozenset(['__module__', '__dict__', '__weakref__'])
+
 
 class CaseClassMixin(object):
     """Mixin to add "case class" behavior to a class.
@@ -114,14 +116,14 @@ def case(original_class):
     __dict__ = {
         '__fields__': fields,
         '__slots__': fields,
-        '__doc__': original_class.__doc__,
         '__init__': __init__,
         '__init_signature__': init_signature,
     }
+    ignored_attrs = _IGNORED_ATTRS.union(__dict__.keys())
     __dict__.update(
         (k, v)
         for (k, v) in original_class.__dict__.iteritems()
-        if not (k.startswith('__') and k.endswith('__'))
+        if k not in ignored_attrs
     )
 
     if issubclass(original_class, CaseClassMixin):

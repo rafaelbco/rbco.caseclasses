@@ -1,3 +1,5 @@
+.. contents::
+
 Overview
 ========
 
@@ -14,7 +16,7 @@ Here's a summary of the features:
 - Supports inheritance.
 
 See also the motivation_ section for other implementations of the concept, specially MacroPy_
-which is a very different approach and the inspiration for this project.
+which was the inspiration for this project and uses a very different approach.
 
 
 Basic Usage
@@ -165,24 +167,57 @@ have an extra field::
     >>> p == e
     False
 
-Of course the subclass can override a method on the base class::
+Overriding a base class method works as expected::
 
     >>> @case
     ... class ImprovedEmployee(Employee):
     ...     def present(self):
     ...         super(ImprovedEmployee, self).present()
-    ...         print 'I work in the {} department.'.format(self.department)
+    ...         print 'I work at the {} department.'.format(self.department)
     ...
     >>> ie = ImprovedEmployee(name='Mary', department='marketing', age=33, gender='f')
     >>> ie.present()
     I'm Mary, 33 years old and my gender is 'f'.
-    I work in the marketing department.
+    I work at the marketing department.
+
+
+Overriding case class behavior
+==============================
+
+It's possible to override the standard case class methods (``__repr__``, ``__eq__``, etc).
+For example::
+
+    >>> @case
+    ... class Foo(object):
+    ...     def __init__(self, bar):
+    ...         pass
+    ...
+    ...     def __eq__(self, other):
+    ...         return True  # All `Foo`s are equal.
+    ...
+    >>> Foo('bar') == Foo('baz')
+    True
+
+It's even possible to call the original version on the subclass method::
+
+    >>> @case
+    ... class Foo(object):
+    ...     def __init__(self, bar):
+    ...         pass
+    ...
+    ...     def __repr__(self):
+    ...         return 'This is my string representation: ' + super(Foo, self).__repr__()
+    ...
+    >>> Foo('bar')
+    This is my string representation: Foo(bar='bar')
+
+
 
 
 Limitations
 ===========
 
-Case class constructor cannot take *args or **kwargs.
+.. Case class constructor cannot take *args or **kwargs.
 
 
 .. _motivation:
