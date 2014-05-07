@@ -1,6 +1,8 @@
 #coding=utf8
 from funcsigs import Parameter
 from funcsigs import signature
+from collections import OrderedDict
+
 
 _IGNORED_ATTRS = frozenset(['__module__', '__dict__', '__weakref__'])
 
@@ -32,8 +34,11 @@ class CaseClassMixin(object):
 
     def __repr__(self):
         fields_repr = ', '.join(
-            '{k}={v}'.format(k=k, v=repr(getattr(self, k)))
-            for k
+            '{field_name}={value}'.format(
+                field_name=field_name,
+                value=repr(getattr(self, field_name))
+            )
+            for field_name
             in self.__fields__
         )
         return '{name}({fields_repr})'.format(
@@ -52,6 +57,15 @@ class CaseClassMixin(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def as_dict(self):
+        return OrderedDict(
+            (field_name, getattr(self, field_name))
+            for field_name in self.__fields__
+        )
+
+    def as_tuple(self):
+        return tuple(getattr(self, field_name) for field_name in self.__fields__)
 
 
 def case(original_class):

@@ -4,13 +4,16 @@ Overview
 ========
 
 The goal of this project is to provide a compact syntax to define simple "struct-like" (or "record-
-like", "bean-like") classes. The resulting classes are very similar to namedtuple_, but mutable.
+like", "bean-like") classes. The resulting classes are very similar to namedtuple_, but mutable,
+with a nicer syntax and more features.
 
 Here's a summary of the features:
 
+- It's possible to define default values for fields.
 - Useful ``__repr__`` and ``__str__`` implementations.
 - Structural equality, i.e, useful ``__eq__`` and ``__ne__`` implementations.
 - ``copy`` method (copy-constructor).
+- Conversion from/to dictionary and tuple.
 - `__slots__`_ declaration to improve performance and prevent assignment on unknown fields.
 - It's possible to define custom methods.
 - Supports inheritance.
@@ -72,6 +75,10 @@ This is because of the ``__slots__`` declaration::
     >>> p.__slots__
     ['name', 'age', 'gender']
 
+
+Structural equality
+===================
+
 Structural equality is supported::
 
     >>> p1 = Person('John', 30)
@@ -90,7 +97,11 @@ Structural equality is supported::
     >>> p1 == p2
     False
 
-A copy constructor is provided::
+
+Copy-constructor
+================
+
+A copy-constructor is provided::
 
     >>> p1 = Person('John', 30)
     >>> copy_of_p1 = p1.copy()
@@ -103,6 +114,30 @@ A copy constructor is provided::
     >>> p2 = p1.copy(name='Bob', gender='m')
     >>> p2
     Person(name='Bob', age=30, gender='m')
+
+
+Conversion from/to dictionary and tuple
+=======================================
+
+Conversion from/to dictionary is easy. The ``as_dict`` method return an ``OrderedDict``::
+
+    >>> p1 = Person('Mary', 33)
+    >>> p1
+    Person(name='Mary', age=33, gender=None)
+    >>> p1.as_dict()
+    OrderedDict([('name', 'Mary'), ('age', 33), ('gender', None)])
+    >>> Person(**p1.as_dict())
+    Person(name='Mary', age=33, gender=None)
+
+Conversion from/to tuple is also possible::
+
+    >>> p1 = Person('John', 30)
+    >>> p1
+    Person(name='John', age=30, gender=None)
+    >>> p1.as_tuple()
+    ('John', 30, None)
+    >>> Person(*p1.as_tuple())
+    Person(name='John', age=30, gender=None)
 
 
 Custom methods
