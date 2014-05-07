@@ -248,7 +248,38 @@ It's even possible to call the original version on the subclass method::
 
 .. IMPORTANT::
    It's not possible to override the ``__init__`` method, because it's replaced when the ``@case``
-   decorator is applied.
+   decorator is applied. If a custom constructor is needed using the CaseClassMixin__ can be
+   a solution.
+
+__ mixin_
+
+
+.. _mixin:
+Using ``CaseClassMixin`` for more flexibility
+=============================================
+
+The classes created by the ``@case`` decorator inherits from ``CaseClassMixin``.
+
+    >>> from rbco.caseclasses import CaseClassMixin
+    >>> issubclass(Person, CaseClassMixin)
+    True
+
+The ``CaseClassMixin`` provides all the "case class" behavior, except for the constructor.
+To use ``CaseClassMixin`` directly the only requirement the subclass must match is to provide a
+``__fields__`` attribute, containing a sequence of field names.
+
+This can be useful if greater flexibility is required. In the following example we create a case
+class with a custom constructor::
+
+    >>> class Foo(CaseClassMixin):
+    ...     __fields__ = ('field1', 'field2')
+    ...
+    ...     def __init__(self, field1, field2=None):
+    ...         self.field1 = field1 + '_modified'
+    ...         self.field2 = field2 or [1, 2]
+    ...
+    >>> Foo('bar')
+    Foo(field1='bar_modified', field2=[1, 2])
 
 
 Limitations
@@ -257,15 +288,10 @@ Limitations
 - The constructor of a case class cannot be customized because it's replaced when the ``@case``
   decorator is applied.
 
-- It's not possible to assign to unknow fields because of the ``__slots__`` declaration. Example::
-
-    >>> p1 = Person('John')
-    >>> p1.foo = 'bar'
-
+- It's not possible to assign to unknow fields because of the ``__slots__`` declaration.
 
 
 .. _motivation:
-
 Motivation and other implementations
 ====================================
 
