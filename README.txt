@@ -31,6 +31,7 @@ Let's start by creating a simple case class::
     >>>
     >>> @case
     ... class Person(object):
+    ...     """Represent a person."""
     ...     def __init__(self, name, age=None, gender=None):
     ...         pass
 
@@ -53,6 +54,26 @@ The constructor works as expected, according to the provided ``__init__`` stub::
 Note that in the string representation the fields are in the same order as defined in the
 constructor.
 
+The docstring of the class is preserved::
+
+    >>> Person.__doc__
+    'Represent a person.'
+
+The signature of the constructor is not preserved. The resulting ``__init__`` method signature
+is a generic one, taking only ``*args`` and ``**kwargs``::
+
+    >>> from inspect import getargspec
+    >>> getargspec(Person.__init__)
+    ArgSpec(args=['self'], varargs='args', keywords='kwargs', defaults=None)
+
+However the docstring contains the original signature::
+
+    >>> Person.__init__.__doc__
+    'Original signature: (self, name, age=None, gender=None)'
+
+Mutability and __slots__
+========================
+
 Instances are mutable::
 
     >>> p = Person('John')
@@ -70,7 +91,7 @@ However it's not possible to assign to unknown attributes::
     ...
     AttributeError: 'Person' object has no attribute 'department'
 
-This is because of the ``__slots__`` declaration::
+This is because of the `__slots__`_ declaration::
 
     >>> p.__slots__
     ['name', 'age', 'gender']
@@ -248,13 +269,12 @@ It's even possible to call the original version on the subclass method::
 
 .. IMPORTANT::
    It's not possible to override the ``__init__`` method, because it's replaced when the ``@case``
-   decorator is applied. If a custom constructor is needed using the CaseClassMixin__ can be
+   decorator is applied. If a custom constructor is needed using the CaseClassMixin_ can be
    a solution.
 
-__ mixin_
 
+.. _CaseClassMixin:
 
-.. _mixin:
 Using ``CaseClassMixin`` for more flexibility
 =============================================
 
@@ -274,11 +294,11 @@ class with a custom constructor::
     >>> class Foo(CaseClassMixin):
     ...     __fields__ = ('field1', 'field2')
     ...
-    ...     def __init__(self, field1, field2=None):
+    ...     def __init__(self, field1, *args):
     ...         self.field1 = field1 + '_modified'
-    ...         self.field2 = field2 or [1, 2]
+    ...         self.field2 = list(args)
     ...
-    >>> Foo('bar')
+    >>> Foo('bar', 1, 2)
     Foo(field1='bar_modified', field2=[1, 2])
 
 
@@ -286,14 +306,37 @@ Limitations
 ===========
 
 - The constructor of a case class cannot be customized because it's replaced when the ``@case``
-  decorator is applied.
+  decorator is applied. See the section about CaseClassMixin_ for an alternative.
 
 - It's not possible to assign to unknow fields because of the ``__slots__`` declaration.
 
+- The constructor cannot take ``*args`` or ``**kwargs``. See the section about CaseClassMixin_ for
+  an alternative.
+
 
 .. _motivation:
-Motivation and other implementations
-====================================
+
+Motivation, design decisions and other implementations
+======================================================
+
+Comparison with MacroPy
+-----------------------
+
+The idea for this project came from MacroPy_. It provides an implementation of case classes using
+syntactic macros, which results in a very elegant way to define the case classes.
+The motivation was to provide similar functionality without resorting to syntactic macros nor
+string evaluation (`the approach took by namedtuple`__). In other words: to provide the best
+implementation possible without using much magic.
+
+__ `namedtuple source code`_
+
+Without regarding the implementation details (amount of magic used), the results can be compared
+to MacroPy_ as this:
+
+
+
+
+
 
 
 https://github.com/lihaoyi/macropy#case-classes
@@ -311,3 +354,4 @@ http://hwiechers.blogspot.com.br/2010/08/case-classes-in-python.html
 .. _namedtuple:
 .. _`__slots__`:
 .. _MacroPy: https://github.com/lihaoyi/macropy#case-classes
+.. _`namedtuple source code`: https://github.com/python/cpython/blob/2.7/Lib/collections.py

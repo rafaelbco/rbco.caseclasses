@@ -126,6 +126,8 @@ def case(original_class):
                 continue
             setattr(self, field_name, value)
 
+    __init__.__doc__ = 'Original signature: {}'.format(init_signature)
+
     fields = [p.name for p in init_parameters if p.name != 'self']
     __dict__ = {
         '__fields__': fields,
