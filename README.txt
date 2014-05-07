@@ -22,6 +22,15 @@ See also the motivation_ section for other implementations of the concept, speci
 which was the inspiration for this project and uses a very different approach.
 
 
+Supported Python Versions
+=========================
+
+Instalation
+===========
+
+
+
+
 Basic Usage
 ===========
 
@@ -70,6 +79,7 @@ However the docstring contains the original signature::
 
     >>> Person.__init__.__doc__
     'Original signature: (self, name, age=None, gender=None)'
+
 
 Mutability and __slots__
 ========================
@@ -161,11 +171,15 @@ Conversion from/to tuple is also possible::
     Person(name='John', age=30, gender=None)
 
 
-Custom methods
+.. _`custom members`:
+
+Custom members
 ==============
 
-Case classes are very much like regular classes. It's possible to define custom methods in the
-standard way::
+Case classes are very much like regular classes. It's possible to define any kind of custom
+members.
+
+The most common case should be adding a custom instance method::
 
     >>> import math
     >>> @case
@@ -179,6 +193,32 @@ standard way::
     >>> p2 = Point(10, 0)
     >>> p1.distance(p2)
     10.0
+
+Other kinds of class members are supported as well::
+
+    >>> @case
+    ... class Example(object):
+    ...     class_attribute = 'some value'
+    ...
+    ...     def __init__(self, field1): pass
+    ...
+    ...     @staticmethod
+    ...     def static_method():
+    ...         print 'This is an static method.'
+    ...
+    ...     @classmethod
+    ...     def class_method(cls):
+    ...         print 'This is a class method of the class {}.'.format(cls.__name__)
+    ...
+    >>> e = Example('example')
+    >>> Example.class_attribute
+    'some value'
+    >>> e.class_attribute
+    'some value'
+    >>> Example.static_method()
+    This is an static method.
+    >>> Example.class_method()
+    This is a class method of the class Example.
 
 
 Inheritance
@@ -330,18 +370,26 @@ implementation possible without using much magic.
 
 __ `namedtuple source code`_
 
-Without regarding the implementation details (amount of magic used), the results can be compared
-to MacroPy_ as this:
+The comparison to MacroPy_ can be summarized as follows:
+
+    Advantages:
+
+    - No magic.
+    - Allows any kind of `custom members`_, including instance methods.
+    - Since case classes are just regular classes, any kind of inheritance is allowed.
+
+    Disadvantages:
+
+    - MacroPy syntax is much nicer. The ``__init__`` stub thing can be considered kind of ugly
+      in comparison.
+    - Do not support custom initialization logic. This can be achieved by using CaseClassMixin_ but
+      additional work will have to be done by the programmer.
+    - Do not support ``*args`` and ``**kwargs`` in the constructor. Again, this can be achieved by
+      using CaseClassMixin_ at the expense of doing more work.
 
 
-
-
-
-
-
-https://github.com/lihaoyi/macropy#case-classes
-
-http://www.codecommit.com/blog/scala/case-classes-are-cool
+Other implementations
+---------------------
 
 https://gist.github.com/wickman/857930
 
@@ -350,8 +398,13 @@ http://stackoverflow.com/questions/1264833/python-class-factory-to-produce-simpl
 http://hwiechers.blogspot.com.br/2010/08/case-classes-in-python.html
 
 
+Discarded implementation ideas
+------------------------------
+
+
+
 .. Referências:
-.. _namedtuple:
-.. _`__slots__`:
+.. _namedtuple: https://docs.python.org/2/library/collections.html#collections.namedtuple
+.. _`__slots__`: https://docs.python.org/2/reference/datamodel.html?highlight=__slots__#__slots__
 .. _MacroPy: https://github.com/lihaoyi/macropy#case-classes
 .. _`namedtuple source code`: https://github.com/python/cpython/blob/2.7/Lib/collections.py
