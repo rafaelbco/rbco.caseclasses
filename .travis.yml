@@ -10,4 +10,4 @@ script:
   - bin/py.test
 
 after_success:
-  coveralls
+  - bin/coveralls

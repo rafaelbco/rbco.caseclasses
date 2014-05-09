@@ -3,6 +3,9 @@
 .. image:: https://travis-ci.org/rafaelbco/rbco.caseclasses.svg?branch=master
    :target: https://travis-ci.org/rafaelbco/rbco.caseclasses
 
+.. image:: https://coveralls.io/repos/rafaelbco/rbco.caseclasses/badge.png
+   :target: https://coveralls.io/r/rafaelbco/rbco.caseclasses
+
 Overview
 ========
 
