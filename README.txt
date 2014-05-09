@@ -22,13 +22,22 @@ See also the motivation_ section for other implementations of the concept, speci
 which was the inspiration for this project and uses a very different approach.
 
 
-Supported Python Versions
-=========================
+Compatibility
+=============
+
+Currently only Python 2.7 is supported.
+
 
 Instalation
 ===========
 
+The usual::
 
+    pip install rbco.caseclasses
+
+Or::
+
+    easy_install rbco.caseclasses
 
 
 Basic Usage
@@ -41,9 +50,7 @@ Let's start by creating a simple case class::
     >>> @case
     ... class Person(object):
     ...     """Represent a person."""
-    ...     def __init__(self, name, age=None, gender=None):
-    ...         pass
-
+    ...     def __init__(self, name, age=None, gender=None): pass
 
 The declared ``__init__`` is just a stub. The parameters defines which fields the class will have
 and its default values. The ``__init__`` method is replaced by a new one, which takes care of
@@ -184,8 +191,7 @@ The most common case should be adding a custom instance method::
     >>> import math
     >>> @case
     ... class Point(object):
-    ...     def __init__(self, x, y):
-    ...         pass
+    ...     def __init__(self, x, y): pass
     ...
     ...     def distance(self, other):
     ...         return math.sqrt((self.x - other.x)**2 + (self.y - other.y)**2)
@@ -228,8 +234,7 @@ Let's create a base case class and a derived one::
 
     >>> @case
     ... class Person(object):
-    ...     def __init__(self, name, age=None, gender=None):
-    ...         pass
+    ...     def __init__(self, name, age=None, gender=None): pass
     ...
     ...     def present(self):
     ...         print "I'm {}, {} years old and my gender is '{}'.".format(
@@ -240,8 +245,7 @@ Let's create a base case class and a derived one::
     ...
     >>> @case
     ... class Employee(Person):
-    ...     def __init__(self, name, age=None, gender=None, department=None):
-    ...         pass
+    ...     def __init__(self, name, age=None, gender=None, department=None): pass
 
 It's necessary to repeat the fields of the base class, but you would have to do that anyway if
 you were implementing the case classes manually.
@@ -285,8 +289,7 @@ For example::
 
     >>> @case
     ... class Foo(object):
-    ...     def __init__(self, bar):
-    ...         pass
+    ...     def __init__(self, bar): pass
     ...
     ...     def __eq__(self, other):
     ...         return True  # All `Foo`s are equal.
@@ -390,16 +393,121 @@ The comparison to MacroPy_ can be summarized as follows:
 Other implementations
 ---------------------
 
-https://gist.github.com/wickman/857930
+Other implementations of the "case class" concept (or similar) in Python exists:
 
-http://stackoverflow.com/questions/1264833/python-class-factory-to-produce-simple-struct-like-classes
+- The constructor stub mechanism idea was stole from `this implementation`__ by hwiechers.
 
-http://hwiechers.blogspot.com.br/2010/08/case-classes-in-python.html
+__ `hwiechers`_
+
+- A simple implementation by Brian Wickman can be found in `this Gist`__.
+
+__ `wickman gist`_
+
+- `This discussion`__ on stackoverflow has some implementation ideas.
+
+__ `stackoverflow discussion`_
 
 
 Discarded implementation ideas
 ------------------------------
 
+Some implementation ideas were considered but discarded afterwards. Here some of them are
+discussed.
+
+Functional syntax
+^^^^^^^^^^^^^^^^^
+
+This means using a function to generate the class. This would be something like this::
+
+    Person = case_class('Person', 'name', age=None, gender=None)
+
+The first problem with this idea is that there's no way to preserve the order of the fields.
+The ``case_class`` function would have to be defined like this::
+
+    def case_class(__name__, *args, **kwargs):
+        ...
+
+``**kwargs`` is a unordered dictionary, so the order of the fields is lost.
+
+To overcome this the following syntax could be used::
+
+    Person = case_class('Person', 'name', 'age', 'gender', age=None, gender=None)
+
+I thinks this syntax is not elegant enough. I don't like the repetition of field names and to have
+field names represented as both strings and parameter names.
+
+Perhaps something like this would work too::
+
+    Person = case_class('Person', ['name', 'age', 'gender'], {'age': None, 'gender': None})
+
+But again I think the syntax is not elegant.
+
+Also, some functionalities would be difficult to support using this syntax, namely:
+
+- *Custom members*. This would mean complicate the signature of the ``case_class`` function or
+  add the custom members after the class is created. Like this::
+
+    Person = case_class('Person', ...)
+
+    def present(self):
+        print ...
+
+    Person.present = present
+
+  Not very elegant.
+
+- *Inheritance*. This would require a new parameter to the ``case_class`` function, to allow to
+  pass in a base class.
+
+
+Fields specification as parameters to the class decorator
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This would end the necessity to define an empty constructor. The syntax would be like this::
+
+    @case(name, age=None, gender=None)
+    class Person(object):
+        'Represent a person.'
+
+The same problem faced by the function syntax arises: field ordering is not preserved, since
+the ``case`` function would have to accept a ``**kwargs`` argument, which is an unordered dict.
+
+Alternate syntaxes, similar to the ones presented for the functional syntax, could overcome the
+field ordering problem. However I think the solution using a ``__init__`` stub to define the
+fields is more elegant.
+
+
+Fields specification as class attributes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The syntax would be like this::
+
+    @case
+    class Person(object):
+        name = NO_DEFAULT_VALUE
+        age = None
+        gender = None
+
+Again, there's no way to preserve the order of the fields. The ``case`` function would have to
+retrieve the class attributes from ``Person.__dic__``, which is unordered.
+
+Maybe something like this would work::
+
+    @case
+    class Person(object):
+        __fields__ = (
+            ('name', NO_DEFAULT_VALUE),
+            ('age', None),
+            ('gender', None)
+        )
+
+However I think the solution using a ``__init__`` stub to define the fields is more elegant.
+
+Contributing
+============
+
+Please fork this project and submit a pull request if you would like to contribute.
+Thanks in advance !
 
 
 .. Referências:
@@ -407,3 +515,6 @@ Discarded implementation ideas
 .. _`__slots__`: https://docs.python.org/2/reference/datamodel.html?highlight=__slots__#__slots__
 .. _MacroPy: https://github.com/lihaoyi/macropy#case-classes
 .. _`namedtuple source code`: https://github.com/python/cpython/blob/2.7/Lib/collections.py
+.. _`wickman gist`: https://gist.github.com/wickman/857930
+.. _`stackoverflow discussion`: http://stackoverflow.com/questions/1264833/python-class-factory-to-produce-simple-struct-like-classes
+.. _`hwiechers`: http://hwiechers.blogspot.com.br/2010/08/case-classes-in-python.html
