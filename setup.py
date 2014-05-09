@@ -32,6 +32,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
+        'funcsigs >=0.4,<=0.4.999',
     ],
     extras_require={
         'test': [
