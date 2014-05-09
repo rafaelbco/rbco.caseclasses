@@ -6,6 +6,11 @@
 .. image:: https://coveralls.io/repos/rafaelbco/rbco.caseclasses/badge.png
    :target: https://coveralls.io/r/rafaelbco/rbco.caseclasses
 
+.. image:: http://img.shields.io/badge/license-mit-blue.svg
+   :target: https://raw.githubusercontent.com/rafaelbco/rbco.caseclasses/master/docs/LICENSE.txt
+
+
+
 Overview
 ========
 
