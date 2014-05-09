@@ -16,7 +16,6 @@ setup(
     # Get more strings from
     # http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        'Framework :: Plone',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
@@ -24,8 +23,8 @@ setup(
     keywords='caseclasses',
     author='Rafael Oliveira',
     author_email='rafaelbco@gmail.com',
-    url='',
-    license='',
+    url='https://github.com/rafaelbco/rbco.caseclasses',
+    license='MIT',
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['rbco'],
     include_package_data=True,
@@ -38,4 +37,5 @@ setup(
         'test': [
         ]
     },
+    test_suite='',
 )

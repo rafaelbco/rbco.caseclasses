@@ -1,0 +1,33 @@
+{
+    "folders":
+    [
+        {
+            "folder_exclude_patterns":
+            [
+                "eggs",
+                "bin",
+                "develop-eggs",
+                "parts",
+                "var",
+                ".codeintel",
+                "checkouts",
+                ".tox",
+                "include",
+                "lib",
+                "rbco",
+                "*.egg-info",
+                "htmlcov"
+            ],
+            "file_exclude_patterns":
+            [
+                ".coverage",
+                ".installed.cfg",
+                "bootstrap.py"
+            ],
+            "path": "."
+        },
+        {
+            "path": "./parts/omelette"
+        }
+    ]
+}
