@@ -40,8 +40,11 @@ Or::
     easy_install rbco.caseclasses
 
 
-Basic Usage
-===========
+Usage
+=====
+
+Basics
+------
 
 Let's start by creating a simple case class:
 
@@ -111,7 +114,7 @@ It's not possible to create a case class without a constructor:
 
 
 Mutability and __slots__
-========================
+------------------------
 
 Instances are mutable:
 
@@ -143,7 +146,7 @@ This is because of the `__slots__`_ declaration:
 
 
 Structural equality
-===================
+-------------------
 
 Structural equality is supported:
 
@@ -167,7 +170,7 @@ Structural equality is supported:
 
 
 Copy-constructor
-================
+----------------
 
 A copy-constructor is provided:
 
@@ -187,7 +190,7 @@ A copy-constructor is provided:
 
 
 Conversion from/to dictionary and tuple
-=======================================
+---------------------------------------
 
 Conversion from/to dictionary is easy. The ``as_dict`` method return an ``OrderedDict``:
 
@@ -217,7 +220,7 @@ Conversion from/to tuple is also possible:
 .. _`custom members`:
 
 Custom members
-==============
+--------------
 
 Case classes are very much like regular classes. It's possible to define any kind of custom
 members.
@@ -268,7 +271,7 @@ Other kinds of class members are supported as well:
 
 
 Inheritance
-===========
+-----------
 
 Let's create a base case class and a derived one:
 
@@ -330,7 +333,7 @@ Overriding a base class method works as expected:
 
 
 Overriding case class behavior
-==============================
+------------------------------
 
 It's possible to override the standard case class methods (``__repr__``, ``__eq__``, etc).
 For example:
@@ -370,7 +373,7 @@ a solution.
 .. _CaseClassMixin:
 
 Using ``CaseClassMixin`` for more flexibility
-=============================================
+---------------------------------------------
 
 The classes created by the ``@case`` decorator inherits from ``CaseClassMixin``.
 
