@@ -43,7 +43,9 @@ Or::
 Basic Usage
 ===========
 
-Let's start by creating a simple case class::
+Let's start by creating a simple case class:
+
+.. code:: python
 
     >>> from rbco.caseclasses import case
     >>>
@@ -56,7 +58,9 @@ The declared ``__init__`` is just a stub. The parameters defines which fields th
 and its default values. The ``__init__`` method is replaced by a new one, which takes care of
 assigning the values of the fields.
 
-The constructor works as expected, according to the provided ``__init__`` stub::
+The constructor works as expected, according to the provided ``__init__`` stub:
+
+.. code:: python
 
     >>> Person('John')
     Person(name='John', age=None, gender=None)
@@ -70,24 +74,32 @@ The constructor works as expected, according to the provided ``__init__`` stub::
 Note that in the string representation the fields are in the same order as defined in the
 constructor.
 
-The docstring of the class is preserved::
+The docstring of the class is preserved:
+
+.. code:: python
 
     >>> Person.__doc__
     'Represent a person.'
 
 The signature of the constructor is not preserved. The resulting ``__init__`` method signature
-is a generic one, taking only ``*args`` and ``**kwargs``::
+is a generic one, taking only ``*args`` and ``**kwargs``:
+
+.. code:: python
 
     >>> from inspect import getargspec
     >>> getargspec(Person.__init__)
     ArgSpec(args=['self'], varargs='args', keywords='kwargs', defaults=None)
 
-However the docstring contains the original signature::
+However the docstring contains the original signature:
+
+.. code:: python
 
     >>> Person.__init__.__doc__
     'Original signature: (self, name, age=None, gender=None)'
 
-It's not possible to create a case class without a constructor::
+It's not possible to create a case class without a constructor:
+
+.. code:: python
 
     >>> from rbco.caseclasses import case
     >>>
@@ -101,7 +113,9 @@ It's not possible to create a case class without a constructor::
 Mutability and __slots__
 ========================
 
-Instances are mutable::
+Instances are mutable:
+
+.. code:: python
 
     >>> p = Person('John')
     >>> p
@@ -111,14 +125,18 @@ Instances are mutable::
     >>> p
     Person(name='Bob', age=35, gender=None)
 
-However it's not possible to assign to unknown attributes::
+However it's not possible to assign to unknown attributes:
+
+.. code:: python
 
     >>> p.department = 'sales'
     Traceback (most recent call last):
     ...
     AttributeError: 'Person' object has no attribute 'department'
 
-This is because of the `__slots__`_ declaration::
+This is because of the `__slots__`_ declaration:
+
+.. code:: python
 
     >>> p.__slots__
     ['name', 'age', 'gender']
@@ -127,7 +145,9 @@ This is because of the `__slots__`_ declaration::
 Structural equality
 ===================
 
-Structural equality is supported::
+Structural equality is supported:
+
+.. code:: python
 
     >>> p1 = Person('John', 30)
     >>> p2 = Person('Bob', 25)
@@ -149,7 +169,9 @@ Structural equality is supported::
 Copy-constructor
 ================
 
-A copy-constructor is provided::
+A copy-constructor is provided:
+
+.. code:: python
 
     >>> p1 = Person('John', 30)
     >>> copy_of_p1 = p1.copy()
@@ -167,7 +189,9 @@ A copy-constructor is provided::
 Conversion from/to dictionary and tuple
 =======================================
 
-Conversion from/to dictionary is easy. The ``as_dict`` method return an ``OrderedDict``::
+Conversion from/to dictionary is easy. The ``as_dict`` method return an ``OrderedDict``:
+
+.. code:: python
 
     >>> p1 = Person('Mary', 33)
     >>> p1
@@ -177,7 +201,9 @@ Conversion from/to dictionary is easy. The ``as_dict`` method return an ``Ordere
     >>> Person(**p1.as_dict())
     Person(name='Mary', age=33, gender=None)
 
-Conversion from/to tuple is also possible::
+Conversion from/to tuple is also possible:
+
+.. code:: python
 
     >>> p1 = Person('John', 30)
     >>> p1
@@ -196,7 +222,9 @@ Custom members
 Case classes are very much like regular classes. It's possible to define any kind of custom
 members.
 
-The most common case should be adding a custom instance method::
+The most common case should be adding a custom instance method:
+
+.. code:: python
 
     >>> import math
     >>> @case
@@ -210,7 +238,9 @@ The most common case should be adding a custom instance method::
     >>> p1.distance(p2)
     10.0
 
-Other kinds of class members are supported as well::
+Other kinds of class members are supported as well:
+
+.. code:: python
 
     >>> @case
     ... class Example(object):
@@ -240,7 +270,9 @@ Other kinds of class members are supported as well::
 Inheritance
 ===========
 
-Let's create a base case class and a derived one::
+Let's create a base case class and a derived one:
+
+.. code:: python
 
     >>> @case
     ... class Person(object):
@@ -260,7 +292,9 @@ Let's create a base case class and a derived one::
 It's necessary to repeat the fields of the base class, but you would have to do that anyway if
 you were implementing the case classes manually.
 
-Methods from the base class are inherited::
+Methods from the base class are inherited:
+
+.. code:: python
 
     >>> p = Person('John', 30, 'm')
     >>> p.present()
@@ -270,14 +304,18 @@ Methods from the base class are inherited::
     I'm Mary, 33 years old and my gender is 'f'.
 
 Instances of ``Person`` and ``Employee`` will always be considered different, since employees
-have an extra field::
+have an extra field:
+
+.. code:: python
 
     >>> p = Person('John')
     >>> e = Employee('John')
     >>> p == e
     False
 
-Overriding a base class method works as expected::
+Overriding a base class method works as expected:
+
+.. code:: python
 
     >>> @case
     ... class ImprovedEmployee(Employee):
@@ -295,7 +333,9 @@ Overriding case class behavior
 ==============================
 
 It's possible to override the standard case class methods (``__repr__``, ``__eq__``, etc).
-For example::
+For example:
+
+.. code:: python
 
     >>> @case
     ... class Foo(object):
@@ -307,7 +347,9 @@ For example::
     >>> Foo('bar') == Foo('baz')
     True
 
-It's even possible to call the original version on the subclass method::
+It's even possible to call the original version on the subclass method:
+
+.. code:: python
 
     >>> @case
     ... class Foo(object):
@@ -332,6 +374,8 @@ Using ``CaseClassMixin`` for more flexibility
 
 The classes created by the ``@case`` decorator inherits from ``CaseClassMixin``.
 
+.. code:: python
+
     >>> from rbco.caseclasses import CaseClassMixin
     >>> issubclass(Person, CaseClassMixin)
     True
@@ -341,7 +385,9 @@ To use ``CaseClassMixin`` directly the only requirement the subclass must match 
 ``__fields__`` attribute, containing a sequence of field names.
 
 This can be useful if greater flexibility is required. In the following example we create a case
-class with a custom constructor::
+class with a custom constructor:
+
+.. code:: python
 
     >>> class Foo(CaseClassMixin):
     ...     __fields__ = ('field1', 'field2')
@@ -362,16 +408,18 @@ Limitations
 
 - It's not possible to assign to unknow fields because of the ``__slots__`` declaration.
 
-- The constructor cannot take ``*args`` or ``**kwargs``::
+- The constructor cannot take ``*args`` or ``**kwargs``:
 
-    >>> @case
-    ... class Foo(object):
-    ...     def __init__(self, **kwargs): pass
-    Traceback (most recent call last):
-    ...
-    RuntimeError: Case class constructor cannot take *args or **kwargs.
+    .. code:: python
 
-  See the section about CaseClassMixin_ for an alternative.
+        >>> @case
+        ... class Foo(object):
+        ...     def __init__(self, **kwargs): pass
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Case class constructor cannot take *args or **kwargs.
+
+    See the section about CaseClassMixin_ for an alternative.
 
 
 .. _motivation:
@@ -392,20 +440,20 @@ __ `namedtuple source code`_
 
 The comparison to MacroPy_ can be summarized as follows:
 
-    Advantages:
+Advantages:
 
-    - No magic.
-    - Allows any kind of `custom members`_, including instance methods.
-    - Since case classes are just regular classes, any kind of inheritance is allowed.
+- No magic.
+- Allows any kind of `custom members`_, including instance methods.
+- Since case classes are just regular classes, any kind of inheritance is allowed.
 
-    Disadvantages:
+Disadvantages:
 
-    - MacroPy syntax is much nicer. The ``__init__`` stub thing can be considered kind of ugly
-      in comparison.
-    - Do not support custom initialization logic. This can be achieved by using CaseClassMixin_ but
-      additional work will have to be done by the programmer.
-    - Do not support ``*args`` and ``**kwargs`` in the constructor. Again, this can be achieved by
-      using CaseClassMixin_ at the expense of doing more work.
+- MacroPy syntax is much nicer. The ``__init__`` stub thing can be considered kind of ugly
+  in comparison.
+- Do not support custom initialization logic. This can be achieved by using CaseClassMixin_ but
+  additional work will have to be done by the programmer.
+- Do not support ``*args`` and ``**kwargs`` in the constructor. Again, this can be achieved by
+  using CaseClassMixin_ at the expense of doing more work.
 
 
 Other implementations
@@ -435,26 +483,34 @@ discussed.
 Functional syntax
 ^^^^^^^^^^^^^^^^^
 
-This means using a function to generate the class. This would be something like this::
+This means using a function to generate the class. This would be something like this:
+
+.. code:: python
 
     Person = case_class('Person', 'name', age=None, gender=None)
 
 The first problem with this idea is that there's no way to preserve the order of the fields.
-The ``case_class`` function would have to be defined like this::
+The ``case_class`` function would have to be defined like this:
+
+.. code:: python
 
     def case_class(__name__, *args, **kwargs):
         ...
 
 ``**kwargs`` is a unordered dictionary, so the order of the fields is lost.
 
-To overcome this the following syntax could be used::
+To overcome this the following syntax could be used:
+
+.. code:: python
 
     Person = case_class('Person', 'name', 'age', 'gender', age=None, gender=None)
 
 I thinks this syntax is not elegant enough. I don't like the repetition of field names and to have
 field names represented as both strings and parameter names.
 
-Perhaps something like this would work too::
+Perhaps something like this would work too:
+
+.. code:: python
 
     Person = case_class('Person', ['name', 'age', 'gender'], {'age': None, 'gender': None})
 
@@ -463,14 +519,16 @@ But again I think the syntax is not elegant.
 Also, some functionalities would be difficult to support using this syntax, namely:
 
 - *Custom members*. This would mean complicate the signature of the ``case_class`` function or
-  add the custom members after the class is created. Like this::
+  add the custom members after the class is created. Like this:
 
-    Person = case_class('Person', ...)
+    .. code:: python
 
-    def present(self):
-        print ...
+        Person = case_class('Person', ...)
 
-    Person.present = present
+        def present(self):
+            print ...
+
+        Person.present = present
 
   Not very elegant.
 
@@ -481,7 +539,9 @@ Also, some functionalities would be difficult to support using this syntax, name
 Fields specification as parameters to the class decorator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This would end the necessity to define an empty constructor. The syntax would be like this::
+This would end the necessity to define an empty constructor. The syntax would be like this:
+
+.. code:: python
 
     @case(name, age=None, gender=None)
     class Person(object):
@@ -498,7 +558,9 @@ fields is more elegant.
 Fields specification as class attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The syntax would be like this::
+The syntax would be like this:
+
+.. code:: python
 
     @case
     class Person(object):
@@ -509,7 +571,9 @@ The syntax would be like this::
 Again, there's no way to preserve the order of the fields. The ``case`` function would have to
 retrieve the class attributes from ``Person.__dic__``, which is unordered.
 
-Maybe something like this would work::
+Maybe something like this would work:
+
+.. code:: python
 
     @case
     class Person(object):
