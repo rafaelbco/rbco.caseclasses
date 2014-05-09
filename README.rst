@@ -1,11 +1,14 @@
 .. contents::
 
+.. image:: https://travis-ci.org/rafaelbco/rbco.caseclasses.svg?branch=master
+   :target: https://travis-ci.org/rafaelbco/rbco.caseclasses
+
 Overview
 ========
 
-The goal of this project is to provide a compact syntax to define simple "struct-like" (or "record-
-like", "bean-like") classes. The resulting classes are very similar to namedtuple_, but mutable,
-with a nicer syntax, more flexibility and more features.
+Provide a compact syntax to define simple "struct-like" (or "record-like", "bean-like") classes.
+The resulting classes are very similar to namedtuple_, but mutable, with a nicer syntax, more
+flexibility and more features.
 
 Here's a summary of the features:
 
