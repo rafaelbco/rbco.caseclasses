@@ -1,15 +1,28 @@
-.. contents::
+================
+rbco.caseclasses
+================
 
 .. image:: https://travis-ci.org/rafaelbco/rbco.caseclasses.svg?branch=master
    :target: https://travis-ci.org/rafaelbco/rbco.caseclasses
+   :alt: Build status
 
 .. image:: https://coveralls.io/repos/rafaelbco/rbco.caseclasses/badge.png
    :target: https://coveralls.io/r/rafaelbco/rbco.caseclasses
+   :alt: Coverage
 
-.. image:: http://img.shields.io/badge/license-mit-blue.svg
-   :target: https://raw.githubusercontent.com/rafaelbco/rbco.caseclasses/master/docs/LICENSE.txt
+.. .. image:: https://pypip.in/download/rbco.caseclasses/badge.png
+   :target: https://pypi.python.org/pypi/rbco.caseclasses/
+   :alt: Downloads
 
+.. image:: https://pypip.in/version/rbco.caseclasses/badge.png
+   :target: https://pypi.python.org/pypi/rbco.caseclasses/
+   :alt: Latest Version
 
+.. image:: https://pypip.in/license/rbco.caseclasses/badge.png
+    :target: https://raw.githubusercontent.com/rafaelbco/rbco.caseclasses/master/docs/LICENSE.txt
+    :alt: License
+
+.. contents::
 
 Overview
 ========
