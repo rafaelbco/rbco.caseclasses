@@ -437,16 +437,16 @@ Limitations
 
 - The constructor cannot take ``*args`` or ``**kwargs``:
 
-    .. code:: python
+  .. code:: python
 
-        >>> @case
-        ... class Foo(object):
-        ...     def __init__(self, **kwargs): pass
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Case class constructor cannot take *args or **kwargs.
+    >>> @case
+    ... class Foo(object):
+    ...     def __init__(self, **kwargs): pass
+    Traceback (most recent call last):
+    ...
+    RuntimeError: Case class constructor cannot take *args or **kwargs.
 
-    See the section about CaseClassMixin_ for an alternative.
+  See the section about CaseClassMixin_ for an alternative.
 
 
 .. _motivation:
