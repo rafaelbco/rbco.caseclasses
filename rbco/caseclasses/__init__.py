@@ -1,4 +1,4 @@
-#coding=utf8
+# -*- coding: utf-8 -*-
 from funcsigs import Parameter
 from funcsigs import signature
 from collections import OrderedDict
@@ -116,16 +116,7 @@ def case(original_class):
             raise RuntimeError('Case class constructor cannot take *args or **kwargs.')
 
     def __init__(self, *args, **kwargs):
-        for p in init_parameters:
-            if p.default is not Parameter.empty:
-                setattr(self, p.name, p.default)
-
-        bound_args = init_signature.bind(self, *args, **kwargs)
-        for (field_name, value) in bound_args.arguments.iteritems():
-            if field_name == 'self':
-                continue
-            setattr(self, field_name, value)
-
+        _assign_attributes(self, init_signature, *args, **kwargs)
     __init__.__doc__ = 'Original signature: {}'.format(init_signature)
 
     fields = [p.name for p in init_parameters if p.name != 'self']
@@ -153,3 +144,21 @@ def case(original_class):
         tuple(bases),
         __dict__
     )
+
+
+def _assign_attributes(self, constructor_signature, *args, **kwargs):
+    """
+    Assign the given arguments to attributes of `self` according to `constructor_signature`,
+    which must be an instance of `funcsigs.Signature`.
+    """
+    init_parameters = constructor_signature.parameters.values()
+
+    for p in init_parameters:
+        if p.default is not Parameter.empty:
+            setattr(self, p.name, p.default)
+
+    bound_args = constructor_signature.bind(self, *args, **kwargs)
+    for (field_name, value) in bound_args.arguments.iteritems():
+        if field_name == 'self':
+            continue
+        setattr(self, field_name, value)
