@@ -5,6 +5,7 @@ Changelog
 ------------------
 
 - Improve documentation.
+- Minor refactoring.
 
 
 1.0.0 (2014-05-09)
