@@ -87,6 +87,16 @@ However the docstring contains the original signature::
     >>> Person.__init__.__doc__
     'Original signature: (self, name, age=None, gender=None)'
 
+It's not possible to create a case class without a constructor::
+
+    >>> from rbco.caseclasses import case
+    >>>
+    >>> @case
+    ... class Foo(object): pass
+    Traceback (most recent call last):
+    ...
+    RuntimeError: Case class must define a constructor.
+
 
 Mutability and __slots__
 ========================
@@ -352,8 +362,16 @@ Limitations
 
 - It's not possible to assign to unknow fields because of the ``__slots__`` declaration.
 
-- The constructor cannot take ``*args`` or ``**kwargs``. See the section about CaseClassMixin_ for
-  an alternative.
+- The constructor cannot take ``*args`` or ``**kwargs``::
+
+    >>> @case
+    ... class Foo(object):
+    ...     def __init__(self, **kwargs): pass
+    Traceback (most recent call last):
+    ...
+    RuntimeError: Case class constructor cannot take *args or **kwargs.
+
+  See the section about CaseClassMixin_ for an alternative.
 
 
 .. _motivation:
