@@ -8,7 +8,7 @@ version = '1.0.2.dev0'
 setup(
     name='rbco.caseclasses',
     version=version,
-    description='Provide a compact syntax to define simple "struct-like" (or "record-like", "bean-like") classes.',
+    description='Compact syntax to define simple "struct-like" (or "record-like", "bean-like") classes.',
     long_description=(
         open('README.rst').read() + '\n\n' +
         open(os.path.join('docs', 'HISTORY.txt')).read()
