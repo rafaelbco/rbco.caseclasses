@@ -56,3 +56,4 @@ include
 share
 
 .codeintel
+*.sublime-workspace
