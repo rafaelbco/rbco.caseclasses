@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Compact syntax to define simple "struct-like" (or "record-like", "bean-like") classes."""
 from funcsigs import Parameter
 from funcsigs import signature
 from collections import OrderedDict
@@ -8,6 +9,7 @@ _IGNORED_ATTRS = frozenset(['__module__', '__dict__', '__weakref__'])
 
 
 class CaseClassMixin(object):
+
     """Mixin to add "case class" behavior to a class.
 
     The subclass must implement a `__fields__` attribute, containing a sequence of field names.
@@ -33,6 +35,7 @@ class CaseClassMixin(object):
         return self.__class__(**d)
 
     def __repr__(self):
+        """Return the canonical string representation of the object."""
         fields_repr = ', '.join(
             '{field_name}={value}'.format(
                 field_name=field_name,
@@ -47,6 +50,7 @@ class CaseClassMixin(object):
         )
 
     def __eq__(self, other):
+        """Equality operator."""
         try:
             return all(
                 (getattr(self, field_name) == getattr(other, field_name))
@@ -56,15 +60,24 @@ class CaseClassMixin(object):
             return False
 
     def __ne__(self, other):
+        """Inequality operator."""
         return not self.__eq__(other)
 
     def as_dict(self):
+        """Return an ordered dictionary representation of the object.
+
+        Maps from field names to values.
+        """
         return OrderedDict(
             (field_name, getattr(self, field_name))
             for field_name in self.__fields__
         )
 
     def as_tuple(self):
+        """Return a tuple representation of the object.
+
+        Elements are the field values.
+        """
         return tuple(getattr(self, field_name) for field_name in self.__fields__)
 
 
@@ -147,9 +160,9 @@ def case(original_class):
 
 
 def _assign_attributes(self, constructor_signature, *args, **kwargs):
-    """
-    Assign the given arguments to attributes of `self` according to `constructor_signature`,
-    which must be an instance of `funcsigs.Signature`.
+    """Assign the given arguments to attributes of `self` according to `constructor_signature`.
+
+    `constructor_signature` must be an instance of `funcsigs.Signature`.
     """
     init_parameters = constructor_signature.parameters.values()
 
