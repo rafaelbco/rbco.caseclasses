@@ -10,15 +10,15 @@ rbco.caseclasses
    :target: https://coveralls.io/r/rafaelbco/rbco.caseclasses
    :alt: Coverage
 
-.. .. image:: https://pypip.in/download/rbco.caseclasses/badge.png
+.. .. image:: https://img.shields.io/pypi/dm/rbco.caseclasses.svg
    :target: https://pypi.python.org/pypi/rbco.caseclasses/
    :alt: Downloads
 
-.. image:: https://pypip.in/version/rbco.caseclasses/badge.png
+.. image:: https://img.shields.io/pypi/v/rbco.caseclasses.svg
    :target: https://pypi.python.org/pypi/rbco.caseclasses/
    :alt: Latest Version
 
-.. image:: https://pypip.in/license/rbco.caseclasses/badge.png
+.. image:: https://img.shields.io/pypi/l/rbco.caseclasses.svg
     :target: https://raw.githubusercontent.com/rafaelbco/rbco.caseclasses/master/docs/LICENSE.txt
     :alt: License
 
