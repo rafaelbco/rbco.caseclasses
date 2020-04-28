@@ -4,8 +4,12 @@ Changelog
 1.0.2 (unreleased)
 ------------------
 
+- Allow to use more recent versions of ``funcsigs``.
+  [ale-rt]
 - Minor doc tweaks.
+  [rafaelbco]
 - Improve docstrings.
+  [rafaelbco]
 
 
 1.0.1 (2014-05-09)
