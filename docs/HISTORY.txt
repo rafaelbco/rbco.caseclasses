@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.2 (unreleased)
+1.0.2 (2020-04-27)
 ------------------
 
 - Allow to use more recent versions of ``funcsigs``.
